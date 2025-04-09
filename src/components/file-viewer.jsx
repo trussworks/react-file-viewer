@@ -73,4 +73,3 @@ FileViewer.defaultProps = {
 }
 
 export default FileViewer
-module.exports = FileViewer

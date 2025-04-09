@@ -20,7 +20,10 @@
       "version": "detect"
     },
     "import/resolver": {
-      "webpack": "webpack.config.js"
+      "webpack": "webpack.config.js",
+      "node": {
+        "extensions": [".js", ".jsx"]
+      }
     }
   },
   "extends": [

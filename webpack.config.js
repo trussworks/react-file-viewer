@@ -11,17 +11,21 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 
 const config = {
   entry: `${APP_DIR}/components`,
+  mode: 'production',
+  target: 'web',
   output: {
     path: BUILD_DIR,
     filename: 'index.js',
     library: ['FileViewer'],
     libraryTarget: 'umd',
+    publicPath: '/static/react-file-viewer/',
+    chunkFilename: '[name].chunk.js',
   },
   resolve: {
     modules: [path.resolve(__dirname, './src'), 'node_modules'],
-    extensions: ['.js', '.jsx', '.json'],
+    extensions: ['.js', '.jsx', '.json', '.mjs'],
   },
-  plugins: [new BundleAnalyzerPlugin()],
+  plugins: [new BundleAnalyzerPlugin({ analyzerMode: 'disabled' })],
   externals: [
     {
       react: {
@@ -39,9 +43,19 @@ const config = {
         amd: 'react-dom',
       },
     },
+    { 'pdfjs-dist': 'pdfjs-dist' },
   ],
   module: {
     rules: [
+      {
+        test: /pdf\.worker\.entry\.js$/,
+        use: {
+          loader: 'worker-loader',
+          options: {
+            filename: 'pdf.worker.[contenthash].js',
+          },
+        },
+      },
       {
         test: /\.(js|jsx)$/,
         include: path.resolve(__dirname, './src'),
@@ -63,10 +77,8 @@ const config = {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: [
-                  "autoprefixer",
-                ],
-              }
+                plugins: ['autoprefixer'],
+              },
             },
           },
           {
@@ -82,6 +94,9 @@ const config = {
         },
       },
     ],
+  },
+  experiments: {
+    topLevelAwait: true,
   },
 }
 

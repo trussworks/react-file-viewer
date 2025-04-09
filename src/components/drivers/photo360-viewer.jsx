@@ -2,7 +2,7 @@
 // Modified work Copyright 2020, Trussworks, Inc.
 
 import React, { Component } from 'react'
-import * as THREE from 'three'
+import * as ThreeLib from 'three'
 import 'styles/photo360.scss'
 
 class Photo360Viewer extends Component {
@@ -35,25 +35,25 @@ class Photo360Viewer extends Component {
     const width = positionInfo.width
 
     // add rendered
-    this.renderer = new THREE.WebGLRenderer()
+    this.renderer = new ThreeLib.WebGLRenderer()
     this.renderer.setSize(width, height)
     el.appendChild(this.renderer.domElement)
 
     // creating a new scene
-    this.scene = new THREE.Scene()
+    this.scene = new ThreeLib.Scene()
 
     // adding a camera
-    this.camera = new THREE.PerspectiveCamera(75, width / height, 1, 1000)
-    this.camera.target = new THREE.Vector3(0, 0, 0)
+    this.camera = new ThreeLib.PerspectiveCamera(75, width / height, 1, 1000)
+    this.camera.target = new ThreeLib.Vector3(0, 0, 0)
 
     // creation of a big sphere geometry
-    this.sphere = new THREE.SphereGeometry(100, 100, 40)
-    this.sphere.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1))
+    this.sphere = new ThreeLib.SphereGeometry(100, 100, 40)
+    this.sphere.applyMatrix(new ThreeLib.Matrix4().makeScale(-1, 1, 1))
 
     // creation of the sphere material
-    this.sphereMaterial = new THREE.MeshBasicMaterial()
+    this.sphereMaterial = new ThreeLib.MeshBasicMaterial()
     this.sphereMaterial.map = this.props.texture
-    const sphereMesh = new THREE.Mesh(this.sphere, this.sphereMaterial)
+    const sphereMesh = new ThreeLib.Mesh(this.sphere, this.sphereMaterial)
     this.scene.add(sphereMesh)
     this.updateView()
   }
@@ -97,14 +97,15 @@ class Photo360Viewer extends Component {
     // moving the camera according to current latitude (vertical movement)
     // and longitude (horizontal movement)
     this.camera.target.x =
-      500 *
-      Math.sin(THREE.Math.degToRad(90 - latitude)) *
-      Math.cos(THREE.Math.degToRad(this.state.longitude))
-    this.camera.target.y = 500 * Math.cos(THREE.Math.degToRad(90 - latitude))
+      500 * Math.sin(ThreeLib.MathUtils.degToRad(90 - latitude))
+    Math.cos(ThreeLib.MathUtils.degToRad(this.state.longitude))
+
+    this.camera.target.y =
+      500 * Math.cos(ThreeLib.MathUtils.degToRad(90 - latitude))
     this.camera.target.z =
       500 *
-      Math.sin(THREE.Math.degToRad(90 - latitude)) *
-      Math.sin(THREE.Math.degToRad(this.state.longitude))
+      Math.sin(ThreeLib.MathUtils.degToRad(90 - latitude)) *
+      Math.sin(ThreeLib.MathUtils.degToRad(this.state.longitude))
     this.camera.lookAt(this.camera.target)
 
     this.renderer.render(this.scene, this.camera)

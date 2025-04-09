@@ -1,3 +1,18 @@
+# Table of contents
+- [Table of contents](#table-of-contents)
+- [react-file-viewer](#react-file-viewer)
+  - [Supported file formats:](#supported-file-formats)
+  - [Usage](#usage)
+  - [Development](#development)
+    - [To start demo app](#to-start-demo-app)
+    - [Testing](#testing)
+    - [To run the linter](#to-run-the-linter)
+    - [Extending the file viewer](#extending-the-file-viewer)
+    - [Viewing local changes in a secondary repo](#viewing-local-changes-in-a-secondary-repo)
+    - [Testing locally against the mymove application](#testing-locally-against-the-mymove-application)
+  - [Roadmap](#roadmap)
+
+
 # react-file-viewer
 
 Extendable file viewer for web
@@ -72,11 +87,11 @@ purposes. It is by default served via webpack-dev-server.
 
 ### To start demo app
 
-`yarn start` will start the demo app served by webpack-dev-server
+`yarn serve:dev` will start the webpack analyzer and serve `app.js` for debugging and playwright.
 
 ### Testing
 
-Tests use Jest and Enzyme.
+Tests use Jest, Enzyme, and Playwright.
 
 Run tests with:
 
@@ -94,6 +109,13 @@ To do this run:
 ```
 yarn jest --updateSnapshot
 ```
+
+```
+yarn test:e2e
+```
+
+This runs the playwright tests for the drivers. As certain drivers now rely on modern web API, playwright must be used to
+simulate a real browser environment as this is still experimental within Jest's JSDOM.
 
 ### To run the linter
 
@@ -130,6 +152,22 @@ If you are working on a feature branch and need to see changes introduced in tha
 4. When your react-file-viewer branch is merged into main, update the `package.json` in the secondary repo to declare the react-file-viewer libary normally
 
 `"@trussworks/react-file-viewer": "git+https://github.com/trussworks react-file-viewer"`
+
+### Testing locally against the mymove application
+Testing locally against the mymove application can be done via yarn link, but for the purpose of being thorough it is recommended to manually test against the `/dist/` output. This verifies the webpack is successfully compiling/transpiling and that the mymove application is successfully serving chunks.
+
+TODO: ENHANCE ME (This is supposed to work, but it doesn't. Fallback is still `rm -rf node_modules && yarn install && ./scripts/copy-react-file-viewer && make client_run`)
+1. [OPTIONAL] Within this repository, navigate to `webpack.config.js`. This is the production webpack.
+   1. Find where `  plugins: [new BundleAnalyzerPlugin({ analyzerMode: 'disabled' })]` is located and remove/enable the analyzerMode attribute
+   2. This makes it so you can preview the chunks
+2. Within this repository, run `yarn build`, it should output new files to `/dist/`
+3. Within the [MyMove repository](https://github.com/transcom/mymove) update `package.json` and set `"@transcom/react-file-viewer"` to point to the local location of this repository: Such as `"file:../react-file-viewer"`
+4. Within MyMove, run `yarn upgrade @transcom/react-file-viewer`
+5. Within MyMove, run `./scripts/copy-react-file-viewer`
+
+You should now successfully be testing the webpack build of react-file-viewer against MyMove. Each time you adjust react-file-viewer, repeat steps 2, 4, and 5 to reflect within MyMove.
+
+The benefit of working this way over yarn link is that we can properly simulate MyMove serving the chunks from its `./scripts/copy-react-file-viewer`.
 
 ## Roadmap
 
